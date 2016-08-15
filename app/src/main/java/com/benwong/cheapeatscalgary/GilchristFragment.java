@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,6 +45,7 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
     public static GoogleMap mMap;
 
     SupportMapFragment mapFragment;
+    private SwipeRefreshLayout swipeContainer;
 
     public static RestaurantDbHelper mHelper;
 
@@ -77,24 +79,38 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
         // Set layout manager to position the items
         rvContacts.setLayoutManager(new LinearLayoutManager(getContext()));
         // That's all!
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+//        swipeContainer.setBackgroundResource(darkknight);
 
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                restaurants.clear();
+                swipeContainer.setRefreshing(true);
+                adapter.notifyDataSetChanged();
+
+                if (new Utility().isNetworkConnected(getContext()) == true) {
+                    downloadContent();
+                    Toast.makeText(getContext(), "INTERNET AVAILABLE", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    swipeContainer.setRefreshing(false);
+                    Toast.makeText(getContext(), "INTERNET NOT AVAILABLE", Toast.LENGTH_SHORT).show();
+
+                    mHelper.read();
+
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
 
         if (new Utility().isNetworkConnected(getContext()) == true) {
-
+            downloadContent();
             Toast.makeText(getContext(), "INTERNET AVAILABLE", Toast.LENGTH_SHORT).show();
-            try {
 
-                DownloadTask task = new DownloadTask();
-
-                String query = "https://john-gilchrist-cheap-eats.firebaseio.com/.json";
-
-                task.execute(query);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                System.out.println("Connection error ");
-            }
         } else {
             Toast.makeText(getContext(), "INTERNET NOT AVAILABLE", Toast.LENGTH_SHORT).show();
 
@@ -105,6 +121,22 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
 
 
         return v;
+    }
+
+    private void downloadContent(){
+        try {
+
+            DownloadTask task = new DownloadTask();
+
+            String query = "https://john-gilchrist-cheap-eats.firebaseio.com/.json";
+
+            task.execute(query);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            System.out.println("Connection error ");
+        }
     }
 
     @Override
@@ -161,7 +193,7 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-
+            swipeContainer.setRefreshing(false);
             Toast.makeText(getContext(), "Downloaded Results ", Toast.LENGTH_SHORT).show();
             mHelper.deleteDatabase();
 
