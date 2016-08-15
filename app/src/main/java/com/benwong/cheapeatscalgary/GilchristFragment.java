@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.benwong.cheapeatscalgary.db.RestaurantDbHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,7 +35,7 @@ import java.util.Collections;
  */
 public class GilchristFragment extends Fragment implements OnMapReadyCallback {
 
-    ArrayList<Restaurant> restaurants;
+    public static ArrayList<Restaurant> restaurants;
 
     public static RestaurantsAdapter adapter;
 
@@ -44,12 +45,15 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
 
     SupportMapFragment mapFragment;
 
+    public static RestaurantDbHelper mHelper;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_gilchrist, container, false);
 
         System.out.println("Geolocation in fragment " + MainActivity.userLat + "  " + MainActivity.userLon);
 
+        mHelper = new RestaurantDbHelper(getContext());
 
 // ...
         // Lookup the recyclerview in activity layout
@@ -93,6 +97,10 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
             }
         } else {
             Toast.makeText(getContext(), "INTERNET NOT AVAILABLE", Toast.LENGTH_SHORT).show();
+
+            mHelper.read();
+
+            adapter.notifyDataSetChanged();
         }
 
 
@@ -105,7 +113,7 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(MainActivity.userLat, MainActivity.userLon);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.addMarker(new MarkerOptions().position(sydney).title("You are here!"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16f));
     }
 
@@ -154,6 +162,9 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
+            Toast.makeText(getContext(), "Downloaded Results ", Toast.LENGTH_SHORT).show();
+            mHelper.deleteDatabase();
+
             try {
 //
                 JSONObject jsonObject = new JSONObject(result);
@@ -189,19 +200,35 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
                     newRestaurant.setAddress(String.valueOf(jsonPart.get("Address")));
                     newRestaurant.setDistance(distanceInMeters / 1000);
                     newRestaurant.setCuisine(String.valueOf(jsonPart.get("Cuisine")));
+
+                    String name = String.valueOf(jsonPart.get("Name"));
+                    System.out.println("ONLINE " + name);
+                    String address = String.valueOf(jsonPart.get("Address"));
+                    String cuisine = String.valueOf(jsonPart.get("Cuisine"));
+                    Double distance = Double.valueOf(distanceInMeters / 1000);
 //                    System.out.println("new Restaurant: " + i  + newRestaurant);
 
 
-                    newRestaurant.setLatitude(jsonPart.getJSONObject("Coordinates").getDouble("Latitude"));
-                    newRestaurant.setLongitude(jsonPart.getJSONObject("Coordinates").getDouble("Longitude"));
+                    Double restLatitude = jsonPart.getJSONObject("Coordinates").getDouble("Latitude");
+                    Double restLongitude = jsonPart.getJSONObject("Coordinates").getDouble("Longitude");
+//
+                    newRestaurant.setLatitude(restLatitude);
+                    newRestaurant.setLongitude(restLongitude);
 
-                    System.out.println(newRestaurant.getLatitude());
-                    System.out.println(newRestaurant.getLongitude());
+                    System.out.println("ONLINE latitude " + restLatitude);
+                    System.out.println("ONLINE longitude " + restLongitude);
+
+                    mHelper.insert(name, address, cuisine, distance
+                            , restLatitude, restLongitude
+                    );
+
+
+
 
                     restaurants.add(newRestaurant);
                     Collections.sort(restaurants);
                     adapter.notifyDataSetChanged();
-                    System.out.println(jsonPart.get("Name") + " " + jsonPart.get("Phone") + " " + distanceInMeters / 1000);
+                    System.out.println("ONLINE " + jsonPart.get("Name") + " " + jsonPart.get("Phone") + " " + distanceInMeters / 1000);
                 }
 
 

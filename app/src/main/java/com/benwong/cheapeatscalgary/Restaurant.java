@@ -11,7 +11,7 @@ public class Restaurant implements Comparable<Restaurant>, Parcelable {
     private String name;
     private String phone;
     private String address;
-    private Float distance;
+    private Double distance;
     private String cuisine;
     private Double latitude;
     private Double longitude;
@@ -32,11 +32,11 @@ public class Restaurant implements Comparable<Restaurant>, Parcelable {
         this.longitude = longitude;
     }
 
-    public Float getDistance() {
+    public Double getDistance() {
         return distance;
     }
 
-    public void setDistance(Float distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
 
@@ -87,7 +87,7 @@ public class Restaurant implements Comparable<Restaurant>, Parcelable {
 
     @Override
     public int compareTo(Restaurant another) {
-        return Float.compare(this.getDistance(), another.getDistance());
+        return Double.compare(this.getDistance(), another.getDistance());
     }
 
     @Override

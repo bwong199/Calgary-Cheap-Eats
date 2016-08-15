@@ -62,7 +62,7 @@ public class AvenueAdapter extends
         TextView addressTextView = viewHolder.addressTextView;
         addressTextView.setText(restaurant.getAddress());
 
-        float distance = restaurant.getDistance();
+        Double distance = restaurant.getDistance();
 
         String stringDistance;
 
@@ -122,7 +122,7 @@ public class AvenueAdapter extends
             LatLng calgary = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
             AvenueFragment.mMap.addMarker(new MarkerOptions().position(calgary).title(restaurant.getName()));
             AvenueFragment.mMap.moveCamera(CameraUpdateFactory.newLatLng(calgary));
-            AvenueFragment.mMap.animateCamera(CameraUpdateFactory.zoomTo(15f));
+            AvenueFragment.mMap.animateCamera(CameraUpdateFactory.zoomTo(14f));
 
         }
     }

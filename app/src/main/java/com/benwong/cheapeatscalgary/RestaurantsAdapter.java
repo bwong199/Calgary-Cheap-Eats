@@ -62,7 +62,7 @@ public class RestaurantsAdapter extends
         TextView addressTextView = viewHolder.addressTextView;
         addressTextView.setText(restaurant.getAddress());
 
-        float distance = restaurant.getDistance();
+        Double distance = restaurant.getDistance();
         String stringDistance = String.valueOf(String.format("%.1f", distance));
 
         TextView distanceTextView = viewHolder.distanceTextView;
@@ -120,7 +120,7 @@ public class RestaurantsAdapter extends
             LatLng calgary = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
             GilchristFragment.mMap.addMarker(new MarkerOptions().position(calgary).title(restaurant.getName()));
             GilchristFragment.mMap.moveCamera(CameraUpdateFactory.newLatLng(calgary));
-            GilchristFragment.mMap.animateCamera(CameraUpdateFactory.zoomTo(15f));
+            GilchristFragment.mMap.animateCamera(CameraUpdateFactory.zoomTo(14f));
             System.out.println(restaurant.getName());
             System.out.println(restaurant.getLatitude() + " " + restaurant.getLongitude());
 
