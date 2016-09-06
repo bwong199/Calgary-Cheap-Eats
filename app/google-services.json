@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "486990287624",
+    "firebase_url": "https://john-gilchrist-cheap-eats.firebaseio.com",
+    "project_id": "john-gilchrist-cheap-eats",
+    "storage_bucket": "john-gilchrist-cheap-eats.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486990287624:android:2dfb1904c85ffb23",
+        "android_client_info": {
+          "package_name": "com.benwong.cheapeatscalgary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486990287624-57nukiak5pd435loeig7k8johdu3o3gr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA27c58i5Zfrtfw8i6ubEmmdlP6pQ6M-k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

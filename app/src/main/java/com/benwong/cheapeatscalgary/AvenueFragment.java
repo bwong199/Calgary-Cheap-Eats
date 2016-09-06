@@ -1,14 +1,18 @@
 package com.benwong.cheapeatscalgary;
+
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,22 +46,52 @@ public class AvenueFragment extends Fragment implements OnMapReadyCallback {
 
     SupportMapFragment mapFragment;
 
+    private SwipeRefreshLayout swipeContainer;
+
+    private static View v;
+
+//    private SlidingUpPanelLayout mSlidingPaneLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_avenue, container, false);
+
 
         System.out.println("Geolocation in fragment " + MainActivity.userLat + "  " + MainActivity.userLon);
 
-
+        if (v != null) {
+            ViewGroup parent = (ViewGroup) v.getParent();
+            if (parent != null)
+                parent.removeView(v);
+        }
+        try {
+            v = inflater.inflate(R.layout.fragment_avenue, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
 // ...
         // Lookup the recyclerview in activity layout
         rvContacts = (RecyclerView) v.findViewById(R.id.avenueRV);
 
         mapFragment  = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.avenueFragment);
         mapFragment.getMapAsync(this);
 
         restaurants = new ArrayList<Restaurant>();
+//        mSlidingPaneLayout = (SlidingUpPanelLayout)v.findViewById(R.id.sliding_layout);
+//
+//        mSlidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+//        mSlidingPaneLayout.setOverlayed(true);
+//
+//        mSlidingPaneLayout.setOnDragListener(new View.OnDragListener() {
+//            @Override
+//            public boolean onDrag(View v, DragEvent event) {
+//
+//                int height =   v.getHeight();
+//
+//                    mSlidingPaneLayout.setPanelHeight(height/2);
+//                return false;
+//            }
+//        });
 
         // Create adapter passing in the sample user data
 //        RestaurantsAdapter adapter = new RestaurantsAdapter(getContext(), restaurants);
@@ -73,7 +107,54 @@ public class AvenueFragment extends Fragment implements OnMapReadyCallback {
         // That's all!
 
 
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.avenueSwipeContainer);
 
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                restaurants.clear();
+                swipeContainer.setRefreshing(true);
+                adapter.notifyDataSetChanged();
+
+                if (new Utility().isNetworkConnected(getContext()) == true) {
+                    downloadContent();
+                    Toast.makeText(getContext(), "INTERNET AVAILABLE", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    restaurants.clear();
+                    adapter.notifyDataSetChanged();
+                    swipeContainer.setRefreshing(false);
+                    Toast.makeText(getContext(), "INTERNET NOT AVAILABLE", Toast.LENGTH_SHORT).show();
+
+//                    mHelper.read();
+
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        if (new Utility().isNetworkConnected(getContext()) == true) {
+            downloadContent();
+            Toast.makeText(getContext(), "INTERNET AVAILABLE", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Toast.makeText(getContext(), "INTERNET NOT AVAILABLE", Toast.LENGTH_SHORT).show();
+
+//            mHelper.read();
+
+            adapter.notifyDataSetChanged();
+        }
+
+
+
+        return v;
+    }
+
+    private void downloadContent(){
         try {
 
             DownloadTask task = new DownloadTask();
@@ -87,8 +168,6 @@ public class AvenueFragment extends Fragment implements OnMapReadyCallback {
 
             System.out.println("Connection error " );
         }
-
-        return v;
     }
 
     @Override
@@ -145,7 +224,7 @@ public class AvenueFragment extends Fragment implements OnMapReadyCallback {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-
+            swipeContainer.setRefreshing(false);
             try {
 //
                 JSONObject jsonObject = new JSONObject(result);
@@ -207,7 +286,15 @@ public class AvenueFragment extends Fragment implements OnMapReadyCallback {
             }
 
 
-
+//
+//            final Handler handler = new Handler();
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mSlidingPaneLayout.setPanelHeight(200);
+//                    mSlidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//                }
+//            }, 2000);
         }
     }
 }

@@ -17,6 +17,12 @@ import java.util.Collections;
  */
 public class RestaurantDbHelper extends SQLiteOpenHelper {
 
+
+    private static final String ALTER_TABLE = "ALTER TABLE "
+            + RestaurantContract.RestaurantEntry.TABLE + " ADD COLUMN " + RestaurantContract.RestaurantEntry.COL_TASK_RESTAURANT_COORDINATES  + " VARCHAR DEFAULT NULL";
+
+
+
     public RestaurantDbHelper(Context context) {
         super(context, RestaurantContract.DB_NAME, null, RestaurantContract.DB_VERSION);
     }
@@ -37,8 +43,18 @@ public class RestaurantDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + RestaurantContract.RestaurantEntry.TABLE);
-        onCreate(db);
+
+
+//
+//        if (oldVersion == 1){
+//            db.execSQL("DROP TABLE IF EXISTS " + RestaurantContract.RestaurantEntry.TABLE);
+//            onCreate(db);
+//        }
+
+        if (newVersion > oldVersion) {
+            db.execSQL(ALTER_TABLE);
+
+        }
     }
 
     public void deleteDatabase() {
@@ -54,6 +70,7 @@ public class RestaurantDbHelper extends SQLiteOpenHelper {
 
     public void insert(String name, String address, String cuisine, Double distance
             , Double latitude, Double longitude
+//            , String coordinates
     ) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -66,6 +83,7 @@ public class RestaurantDbHelper extends SQLiteOpenHelper {
         values.put(RestaurantContract.RestaurantEntry.COL_TASK_RESTAURANT_DISTANCE, distance);
         values.put(RestaurantContract.RestaurantEntry.COL_TASK_RESTAURANT_LATITUDE, latitude);
         values.put(RestaurantContract.RestaurantEntry.COL_TASK_RESTAURANT_LONGITUDE, longitude);
+//        values.put(RestaurantContract.RestaurantEntry.COL_TASK_RESTAURANT_COORDINATES, coordinates);
         db.insertWithOnConflict(RestaurantContract.RestaurantEntry.TABLE,
                 null,
                 values,
@@ -124,6 +142,7 @@ public class RestaurantDbHelper extends SQLiteOpenHelper {
             int distanceIndex = c.getColumnIndex(RestaurantContract.RestaurantEntry.COL_TASK_RESTAURANT_DISTANCE);
             int latitudeIndex = c.getColumnIndex(RestaurantContract.RestaurantEntry.COL_TASK_RESTAURANT_LATITUDE);
             int longitudeIndex = c.getColumnIndex(RestaurantContract.RestaurantEntry.COL_TASK_RESTAURANT_LONGITUDE);
+//            int coorindateIndex = c.getColumnIndex(RestaurantContract.RestaurantEntry.COL_TASK_RESTAURANT_COORDINATES);
 
             if (c != null && c.moveToFirst()) {
                 do {
@@ -131,6 +150,7 @@ public class RestaurantDbHelper extends SQLiteOpenHelper {
                     System.out.println("READ ADDRESS " + c.getString(addressIndex));
                     System.out.println("READ CUISINE " + c.getString(cuisineIndex));
                     System.out.println("READ DISTANCE " + c.getString(distanceIndex));
+//                    System.out.println("READ CORDINATES " + c.getString(coorindateIndex));
 //                    String singleProduct = c.getString(productIndex) + " : " + Integer.toString(c.getInt(priceIndex)) + " - " + Integer.toString(c.getInt(quantityIndex));
 
                     Restaurant eachRestaurant = new Restaurant();

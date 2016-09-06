@@ -118,7 +118,7 @@ public class AvenueAdapter extends
 
             Restaurant restaurant = mRestaurants.get(position);
 
-
+            AvenueFragment.mMap.clear();
             LatLng calgary = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
             AvenueFragment.mMap.addMarker(new MarkerOptions().position(calgary).title(restaurant.getName()));
             AvenueFragment.mMap.moveCamera(CameraUpdateFactory.newLatLng(calgary));

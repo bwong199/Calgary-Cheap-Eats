@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  */
 public class RestaurantContract {
     public static final String DB_NAME = "com.benwong.cheapeatscalgary.db";
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
 
     public class RestaurantEntry implements BaseColumns {
         public static final String TABLE = "restaurants";
@@ -17,5 +17,6 @@ public class RestaurantContract {
         public static final String COL_TASK_RESTAURANT_DISTANCE = "distance";
         public static final String COL_TASK_RESTAURANT_LATITUDE = "latitude";
         public static final String COL_TASK_RESTAURANT_LONGITUDE = "longitude";
+        public static final String COL_TASK_RESTAURANT_COORDINATES = "coordinates";
     }
 }

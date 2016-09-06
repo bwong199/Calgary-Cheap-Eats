@@ -73,6 +73,8 @@ public class RestaurantsAdapter extends
 
     }
 
+
+
     @Override
     public int getItemCount() {
         return mRestaurants.size();
@@ -110,13 +112,14 @@ public class RestaurantsAdapter extends
 
         }
 
+
         @Override
         public void onClick(View v) {
             int position = getLayoutPosition();
 
             Restaurant restaurant = mRestaurants.get(position);
 
-
+            GilchristFragment.mMap.clear();
             LatLng calgary = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
             GilchristFragment.mMap.addMarker(new MarkerOptions().position(calgary).title(restaurant.getName()));
             GilchristFragment.mMap.moveCamera(CameraUpdateFactory.newLatLng(calgary));

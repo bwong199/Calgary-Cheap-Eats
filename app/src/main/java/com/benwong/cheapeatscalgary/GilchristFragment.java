@@ -1,13 +1,17 @@
 package com.benwong.cheapeatscalgary;
 
+import android.app.Activity;
+import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +38,7 @@ import java.util.Collections;
 /**
  * Created by benwong on 2016-07-25.
  */
-public class GilchristFragment extends Fragment implements OnMapReadyCallback {
+public class GilchristFragment extends Fragment implements OnMapReadyCallback  {
 
     public static ArrayList<Restaurant> restaurants;
 
@@ -43,18 +47,40 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
     public static RecyclerView rvContacts;
 
     public static GoogleMap mMap;
+    private CoordinatorLayout coordinatorLayout;
+
+//    private SlidingUpPanelLayout mSlidingPaneLayout;
 
     SupportMapFragment mapFragment;
     private SwipeRefreshLayout swipeContainer;
 
     public static RestaurantDbHelper mHelper;
 
+    private static View v;
+
+    private Context mContext;
+    @Override
+    public void onAttach(final Activity activity) {
+        super.onAttach(activity);
+        mContext = activity;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_gilchrist, container, false);
-
         System.out.println("Geolocation in fragment " + MainActivity.userLat + "  " + MainActivity.userLon);
 
+        if (v != null) {
+            ViewGroup parent = (ViewGroup) v.getParent();
+            if (parent != null)
+                parent.removeView(v);
+        }
+        try {
+            v = inflater.inflate(R.layout.fragment_gilchrist, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
+//        coordinatorLayout = (CoordinatorLayout) v.findViewById(R.id
+//                .coordinatorLayout);
         mHelper = new RestaurantDbHelper(getContext());
 
 // ...
@@ -64,6 +90,17 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
         mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+//        mSlidingPaneLayout = (SlidingUpPanelLayout)v.findViewById(R.id.sliding_layout);
+//
+//        mSlidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+//        mSlidingPaneLayout.setOverlayed(false);
+
+//
+//        Snackbar snackbar = Snackbar
+//                .make(coordinatorLayout, "Welcome to Calgary Cheap Eats", Snackbar.LENGTH_LONG);
+//
+//        snackbar.show();
 
         restaurants = new ArrayList<Restaurant>();
 
@@ -78,6 +115,7 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
         rvContacts.setAdapter(adapter);
         // Set layout manager to position the items
         rvContacts.setLayoutManager(new LinearLayoutManager(getContext()));
+
         // That's all!
         swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
 //        swipeContainer.setBackgroundResource(darkknight);
@@ -96,7 +134,11 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
                     downloadContent();
                     Toast.makeText(getContext(), "INTERNET AVAILABLE", Toast.LENGTH_SHORT).show();
 
+
+
                 } else {
+                    restaurants.clear();
+                    adapter.notifyDataSetChanged();
                     swipeContainer.setRefreshing(false);
                     Toast.makeText(getContext(), "INTERNET NOT AVAILABLE", Toast.LENGTH_SHORT).show();
 
@@ -110,6 +152,22 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
         if (new Utility().isNetworkConnected(getContext()) == true) {
             downloadContent();
             Toast.makeText(getContext(), "INTERNET AVAILABLE", Toast.LENGTH_SHORT).show();
+
+//            NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//            Intent MyIntent = new Intent();
+//            MyIntent.setClassName("com.my.app.", "com.my.app.MainActivity");
+//            MyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            PendingIntent StartIntent = PendingIntent.getActivity(mContext,0,MyIntent, PendingIntent.FLAG_CANCEL_CURRENT );
+//
+//            Notification mNotification = new Notification.Builder(mContext)
+//                    .setContentTitle("Cheap Eats")
+//                    .setContentText("INTERNET AVAILABLE")
+//                    .setSmallIcon(R.drawable.cheapeatslogo)
+//                    .setContentIntent(StartIntent)
+//                    .build();
+//            int NOTIFICATION_ID = 1;
+//            notificationManager.notify(NOTIFICATION_ID , mNotification);
 
         } else {
             Toast.makeText(getContext(), "INTERNET NOT AVAILABLE", Toast.LENGTH_SHORT).show();
@@ -244,6 +302,8 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
                     Double restLatitude = jsonPart.getJSONObject("Coordinates").getDouble("Latitude");
                     Double restLongitude = jsonPart.getJSONObject("Coordinates").getDouble("Longitude");
 //
+//                    String coords = jsonPart.getString("Coordinates");
+
                     newRestaurant.setLatitude(restLatitude);
                     newRestaurant.setLongitude(restLongitude);
 
@@ -252,6 +312,7 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
 
                     mHelper.insert(name, address, cuisine, distance
                             , restLatitude, restLongitude
+//                            , coords
                     );
 
 
@@ -273,6 +334,15 @@ public class GilchristFragment extends Fragment implements OnMapReadyCallback {
                 e.printStackTrace();
             }
 
+
+
+//            final Handler handler = new Handler();
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mSlidingPaneLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//                }
+//            }, 1500);
 
         }
     }

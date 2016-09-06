@@ -9,8 +9,8 @@ import android.support.v4.app.FragmentPagerAdapter;
  * Created by benwong on 2016-07-25.
  */
 public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 2;
-    private String tabTitles[] = new String[] { "John Gilchrist", "Avenue Magazine"};
+    final int PAGE_COUNT = 4;
+    private String tabTitles[] = new String[] { "John Gilchrist", "Avenue Magazine", "About", "Donation"};
     private Context context;
 
     public SampleFragmentPagerAdapter(FragmentManager fm, Context context) {
@@ -27,8 +27,12 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         if(position == 0){
             return new GilchristFragment();
-        } else {
+        } else if (position == 1){
             return new AvenueFragment();
+        } else if (position == 2){
+            return new DetailsFragment();
+        } else {
+            return new DonationFragment();
         }
 
     }

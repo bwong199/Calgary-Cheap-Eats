@@ -1,14 +1,38 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context="com.benwong.cheapeatscalgary.Details">
 
-    <!-- TODO: Update blank fragment layout -->
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
-</FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Putting the esteemed Calgary food writer,John Gilchrist&apos;s picks, and Avenue Magazine&apos;s Cheap Eat picks together in one single Calgary Cheap Eat Directory"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true" android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
+        android:padding="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="App&apos;s sources:"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/textView" android:layout_centerHorizontal="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Avenue Magazine Picks"
+        android:id="@+id/avenuePicks"
+        android:layout_alignTop="@+id/gilChristPicks" android:layout_toRightOf="@+id/textView2"
+        android:layout_toEndOf="@+id/textView2"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="John GilChrist&apos;s Picks"
+        android:id="@+id/gilChristPicks"
+        android:layout_marginTop="32dp" android:layout_below="@+id/textView2"
+        android:layout_toLeftOf="@+id/textView2" android:layout_toStartOf="@+id/textView2"/>
+</RelativeLayout>

@@ -15,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:background="#b3b3ff">
+            android:background="#b3b3ff"
+            android:layout_alignParentBottom="true" android:layout_centerHorizontal="true">
 
             <TextView
                 android:id="@+id/contact_name"
@@ -23,31 +24,32 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_alignParentTop="true"
-                android:textSize="15sp"
-                android:text="NAME"/>
+                android:textSize="10sp"
+                android:text="NAME" android:textIsSelectable="false"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ADDRESS"
-                android:id="@+id/addressTV" android:layout_below="@+id/contact_name"
+                android:id="@+id/addressTV"
+                android:textSize="8sp" android:layout_below="@+id/contact_name"
                 android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
-                android:textSize="10sp"/>
+                android:layout_marginTop="33dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DISTANCE"
                 android:id="@+id/distanceTV"
-                android:layout_alignBottom="@+id/contact_name"
+                android:textSize="12dp" android:layout_alignTop="@+id/cuisineTV"
                 android:layout_alignParentRight="true" android:layout_alignParentEnd="true"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="CUISINE"
-                android:id="@+id/cuisineTV" android:layout_alignBottom="@+id/contact_name"
-                android:layout_toRightOf="@+id/contact_name"
-                android:layout_toEndOf="@+id/contact_name" android:paddingLeft="10dp"
-                android:textSize="15sp"/>
+                android:id="@+id/cuisineTV"
+                android:textSize="10sp"
+                android:layout_centerVertical="true" android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
 
         </RelativeLayout>
 
